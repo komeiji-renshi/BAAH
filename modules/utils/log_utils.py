@@ -110,7 +110,7 @@ class MyLogger:
     def format_msg(self, msg, level):
         """解析dict或str，加入时间，错误级别"""
         msg = self.get_i18n_sentence(msg)
-        output_line = f"{config.NOWVERSION} - {strftime('%M:%S')} - {level} : {str(msg)}"
+        output_line = f"{config.NOWVERSION} - {strftime('%Y-%m-%d %H:%M:%S')} - {level} : {str(msg)}"
         return output_line
     
     def colorful_print(self, msg, level):

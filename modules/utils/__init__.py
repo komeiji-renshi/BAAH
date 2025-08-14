@@ -84,6 +84,8 @@ def swipe(item:Union[str, Tuple[float, float]], toitem: Union[str, Tuple[float, 
     """
     frompos = None
     topos = None
+    from_template = item if isinstance(item, str) else None
+    to_template = toitem if isinstance(toitem, str) else None
     # check if the item is a str
     if isinstance(item, str):
         (res, pos) = match_pattern(sourcepic_mat=get_screenshot_cv_data() ,patternpic=item)
@@ -98,6 +100,13 @@ def swipe(item:Union[str, Tuple[float, float]], toitem: Union[str, Tuple[float, 
     else:
         topos = (toitem[0], toitem[1])
     if(frompos and topos):
+        try:
+            logging.info(istr({
+                CN: f"滑动: ({int(frompos[0])}, {int(frompos[1])}) -> ({int(topos[0])}, {int(topos[1])}) 模板: from={from_template if from_template else 'coord'}, to={to_template if to_template else 'coord'}",
+                EN: f"Swipe: ({int(frompos[0])}, {int(frompos[1])}) -> ({int(topos[0])}, {int(topos[1])}) template: from={from_template if from_template else 'coord'}, to={to_template if to_template else 'coord'}",
+            }))
+        except Exception:
+            pass
         swipe_on_screen(frompos[0], frompos[1], topos[0], topos[1], durationtime*1000)
         if sleeptime == -1:
             sleep(get_config_time_after_click())
@@ -105,7 +114,13 @@ def swipe(item:Union[str, Tuple[float, float]], toitem: Union[str, Tuple[float, 
             sleep(sleeptime)
         return True
     else:
-        logging.warning("Cannot find the target pattern {} and {} when try to swipe".format(item, toitem))
+        try:
+            logging.warning(istr({
+                CN: f"无法匹配滑动端点: from={from_template if from_template else item}, to={to_template if to_template else toitem}",
+                EN: f"Cannot find swipe endpoints: from={from_template if from_template else item}, to={to_template if to_template else toitem}",
+            }))
+        except Exception:
+            logging.warning("Cannot find the target pattern {} and {} when try to swipe".format(item, toitem))
         return False
 
 def match(imgurl:str, threshold:float = 0.9, returnpos = False, rotate_trans=False) -> bool | Tuple[bool, Tuple[float, float], float]:

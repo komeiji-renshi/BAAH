@@ -40,9 +40,8 @@ def BAAH_core_process(reread_config_name = None, must_auto_quit = False, msg_que
     def print_BAAH_info():
         logging.info("+" + "BAAH".center(80, "=") + "+")
         logging.info("||" + f"Version: {config.softwareconfigdict['NOWVERSION']}".center(80, " ") + "||")
-        logging.info("||" + "Bilibili: https://space.bilibili.com/7331920".center(80, " ") + "||")
-        logging.info("||" + "Github: https://github.com/sanmusen214/BAAH".center(80, " ") + "||")
-        logging.info("||" + "QQ group: 715586983".center(80, " ") + "||")
+        logging.info("||" + "原项目Github: https://github.com/sanmusen214/BAAH".center(80, " ") + "||")
+        logging.info("||" + "重构人: huangzijian@magictavern.com".center(80, " ") + "||")
         logging.info("||" + "".center(80, " ") + "||")
         logging.info("+" + "".center(80, "=") + "+")
 
