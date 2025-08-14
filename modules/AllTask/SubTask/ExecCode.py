@@ -1,13 +1,5 @@
-
-from DATA.assets.PageName import PageName
-from DATA.assets.ButtonName import ButtonName
-from DATA.assets.PopupName import PopupName
-
-from modules.AllPage.Page import Page
 from modules.AllTask.Task import Task
-
-from modules.utils import click, swipe, match, page_pic, button_pic, popup_pic, sleep, ocr_area, config, screenshot, match_pixel, istr, CN, EN, JP
-from modules.utils.log_utils import logging
+from modules.utils import logging, istr, CN, EN
 
 class ExecCode(Task):
     def __init__(self, content, name="ExecCode") -> None:

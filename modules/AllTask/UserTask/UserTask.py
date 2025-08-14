@@ -1,14 +1,7 @@
-
-from DATA.assets.PageName import PageName
-from DATA.assets.ButtonName import ButtonName
-from DATA.assets.PopupName import PopupName
-
-from modules.AllPage.Page import Page
 from modules.AllTask.Task import Task
 from modules.AllTask.SubTask.ExecCode import ExecCode
 
-from modules.utils import click, swipe, match, page_pic, button_pic, popup_pic, sleep, ocr_area, config, screenshot, match_pixel, istr, CN, EN, JP
-from modules.utils.log_utils import logging
+from modules.utils import config, logging, istr, CN, EN
 
 class UserTask(Task):
     def __init__(self, name="UserTask") -> None:
@@ -33,7 +26,7 @@ class UserTask(Task):
                 CN: "自定义任务执行错误，尝试返回游戏主页",
                 EN: "Defined task error, try to return to the game homepage",
             }))
-            self.back_to_home()
+            # 非特定游戏，尽量不做强耦合的页面恢复
 
      
     def post_condition(self) -> bool:

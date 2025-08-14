@@ -177,13 +177,34 @@ def get_now_running_app_entrance_activity(use_config=None):
     return entrance_activity
 
 
+def resolve_package_entrance_activity(package_name: str, use_config=None) -> str:
+    """
+    仅根据包名解析其可启动入口 Activity（不依赖前台应用）。
+
+    Returns: "package/activity" 或原样返回 package_name 当解析失败
+    """
+    try:
+        if use_config:
+            output = subprocess_run([get_config_adb_path(use_config), "-s", getNewestSeialNumber(use_config), 'shell', 'cmd', 'package', 'resolve-activity', '--brief', package_name]).stdout
+        else:
+            output = subprocess_run([get_config_adb_path(), "-s", getNewestSeialNumber(), 'shell', 'cmd', 'package', 'resolve-activity', '--brief', package_name]).stdout
+        parts = output.split()
+        if parts:
+            resolved = parts[-1].strip()
+            if "/" in resolved:
+                return resolved
+    except Exception as e:
+        logging.error(f"resolve_package_entrance_activity failed: {e}")
+    return package_name
+
+
 def check_app_running(activity_path: str) -> bool:
     """
     检查app是否在运行，不校验app的activity,只校验app的名字
     """
     try:
-        app_name = activity_path.split("/")[0]
-    except Exception as e:
+        app_name = activity_path.split("/")[0] if "/" in activity_path else activity_path
+    except Exception:
         logging.error({"zh_CN": "activity_path格式错误", "en_US": "The format of activity_path is wrong"})
         return False
     # 获取当前运行的app
@@ -212,15 +233,17 @@ def open_app(activity_path: str):
         logging.error(f"Error when check brand: {e}")
         pass
     # ==============================
+    # 支持仅传入包名：自动解析入口 Activity
+    to_start = activity_path if "/" in activity_path else resolve_package_entrance_activity(activity_path)
     if brand_waydroid:
-        subprocess_run([get_config_adb_path(), "-s", getNewestSeialNumber(), 'shell', 'am', 'start', '--windowingMode', '4', activity_path], isasync=True)
+        subprocess_run([get_config_adb_path(), "-s", getNewestSeialNumber(), 'shell', 'am', 'start', '--windowingMode', '4', to_start], isasync=True)
     else:
-        subprocess_run([get_config_adb_path(), "-s", getNewestSeialNumber(), 'shell', 'am', 'start', activity_path], isasync=True)
+        subprocess_run([get_config_adb_path(), "-s", getNewestSeialNumber(), 'shell', 'am', 'start', to_start], isasync=True)
     time.sleep(1)
     # 加-n参数，可以在已经启动的时候，切换activity而不只是包
-    subprocess_run([get_config_adb_path(), "-s", getNewestSeialNumber(), 'shell', 'am', 'start', '-n', activity_path], isasync=True)
+    subprocess_run([get_config_adb_path(), "-s", getNewestSeialNumber(), 'shell', 'am', 'start', '-n', to_start], isasync=True)
     time.sleep(1)
-    appname = activity_path.split("/")[0]
+    appname = to_start.split("/")[0] if "/" in to_start else to_start
     subprocess_run([get_config_adb_path(), "-s", getNewestSeialNumber(), 'shell', 'monkey', '-p', appname, '1'], isasync=True)
 
 def close_app(activity_path: str):

@@ -36,7 +36,7 @@ def set_task_order(config, real_taskname_to_show_taskname, logArea):
                 ui.button(f'{config.get_text("button_delete")} {config.get_text("config_task")}', on_click=lambda i=i: del_task(i), color="red")
 
     def add_task(i):
-        config.userconfigdict["TASK_ORDER"].insert(i, TaskName.MAIL)
+        config.userconfigdict["TASK_ORDER"].insert(i, TaskName.CUSTOM)
         config.userconfigdict["TASK_ACTIVATE"].insert(i, True)
         task_order.refresh()
     
@@ -69,10 +69,7 @@ def set_task_order(config, real_taskname_to_show_taskname, logArea):
 
     # 快速调用任务
     show_fast_run_task_buttons([
-        TaskName.MOMOTALK, 
-        [TaskName.MAIN_STORY, TaskName.SHORT_STORY, TaskName.SIDE_STORY],
-        TaskName.SOLVE_CHALLENGE, 
-        [TaskName.PUSH_NORMAL, TaskName.PUSH_HARD],
-        TaskName.EVENTRECAP
+        TaskName.LOGIN_GAME,
+        TaskName.CUSTOM,
     ], config, real_taskname_to_show_taskname, logArea)
 

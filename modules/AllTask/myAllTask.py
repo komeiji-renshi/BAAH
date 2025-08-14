@@ -1,9 +1,6 @@
 from enum import Enum
-from modules.AllTask import *
+from modules.AllTask import Task, UserTask, EnterApp, HelloWorld, ClickLoginButton
 
-from modules.AllPage.Page import Page
-
-from modules.utils import click, swipe, match, page_pic, button_pic, popup_pic, sleep, screenshot
 from modules.utils.log_utils import logging, istr, CN, EN
 from modules.configs.MyConfig import config
 
@@ -12,34 +9,10 @@ class TaskName():
     配置文件里的task任务名称，此类下的属性可作为task标识符
     """
     LOGIN_GAME = "登录游戏"
-    MOMOTALK = "清momotalk"
-    CAFE = "咖啡馆"
-    CAFE_ONLY_TOUCH = "咖啡馆只摸头"
-    TIMETABLE = "课程表"
-    CLUB = "社团"
-    MANUFACTURE = "制造"
-    STORE = "商店"
-    BUY_AP = "购买AP"
-    BOUNTY = "悬赏通缉"
-    SPECIAL = "特殊任务"
-    SCHOOL_EXCHANGE_MEETING = "学园交流会"
-    EXAM = "战术测试"
-    TACTICAL_CHALLENGE = "战术大赛"
-    HARD = "困难关卡"
-    EVENT = "活动关卡"
-    EVENTRECAP = "活动一览"
-    ASSAULT = "总力战"
-    DAILY = "每日任务"
-    MAIL = "邮件"
-    NORMAL = "普通关卡"
-    ONE_CLICK_RAID = "一键扫荡"
-    PUSH_NORMAL = "普通推图"
-    PUSH_HARD = "困难推图"
-    MAIN_STORY = "主线剧情"
-    SHORT_STORY = "短篇剧情"
-    SIDE_STORY = "支线剧情"
-    SOLVE_CHALLENGE = "挑战任务"
+    # 仅保留通用入口任务与自定义任务
     CUSTOM = "自定义任务"
+    HELLOWORLD = "helloworld"
+    CLICK_LOGIN = "点击登陆按钮进入游戏"
 
 class TaskInstance:
     """
@@ -66,181 +39,31 @@ class TaskInstanceMap:
     """
     def __init__(self):
         self.taskmap = {
-            TaskName.LOGIN_GAME:  
+            TaskName.LOGIN_GAME:
                 TaskInstance(
-                    task_config_name = TaskName.LOGIN_GAME,
-                    i18n_key_name = "task_login_game",
-                    task_module = Task, # !EnterGame任务现在被config直接控制并添加在taskpool开头，忽略配置文件里的登录游戏任务，为了防止后面解析任务列表实例时缺少key导致exception，这里以空module Task代替
-                    task_params = {}
+                    task_config_name=TaskName.LOGIN_GAME,
+                    i18n_key_name="task_login_game",
+                    task_module=EnterApp,
+                    task_params={}
                 ),
-            TaskName.MOMOTALK: TaskInstance(
-                    task_config_name = TaskName.MOMOTALK,
-                    i18n_key_name = "task_clear_momotalk",
-                    task_module = InMomotalk,
-                    task_params = {}
-                ),
-            TaskName.EVENTRECAP: TaskInstance(
-                    task_config_name= TaskName.EVENTRECAP,
-                    i18n_key_name="task_event_recap",
-                    task_module=InEventRecap,
-                    task_params = {}
-                ),
-            TaskName.CAFE: TaskInstance(
-                    task_config_name = TaskName.CAFE,
-                    i18n_key_name = "task_cafe",
-                    task_module = InCafe,
-                    task_params = {}
-                ),
-            TaskName.CAFE_ONLY_TOUCH: TaskInstance(
-                    task_config_name = TaskName.CAFE_ONLY_TOUCH,
-                    i18n_key_name = "task_cafe_deprecated",
-                    task_module = InCafe,
-                    task_params = {}
-                ),
-            TaskName.TIMETABLE: TaskInstance(
-                    task_config_name = TaskName.TIMETABLE,
-                    i18n_key_name = "task_timetable",
-                    task_module = InTimeTable,
-                    task_params = {}
-                ),
-            TaskName.CLUB: TaskInstance(
-                    task_config_name = TaskName.CLUB,
-                    i18n_key_name = "task_club",
-                    task_module = InClub,
-                    task_params = {}
-                ),
-            TaskName.MANUFACTURE: TaskInstance(
-                    task_config_name = TaskName.MANUFACTURE,
-                    i18n_key_name = "task_craft",
-                    task_module = InCraft,
-                    task_params = {}
-                ),
-            TaskName.STORE: TaskInstance(
-                    task_config_name = TaskName.STORE,
-                    i18n_key_name = "task_shop",
-                    task_module = InShop,
-                    task_params = {}
-                ),
-            TaskName.BUY_AP: TaskInstance(
-                    task_config_name = TaskName.BUY_AP,
-                    i18n_key_name = "task_buy_ap",
-                    task_module = BuyAP,
-                    task_params = {}
-                ),
-            TaskName.BOUNTY: TaskInstance(
-                    task_config_name = TaskName.BOUNTY,
-                    i18n_key_name = "task_wanted",
-                    task_module = InWanted,
-                    task_params = {}
-                ),
-            TaskName.SPECIAL: TaskInstance(
-                    task_config_name = TaskName.SPECIAL,
-                    i18n_key_name = "task_special",
-                    task_module = InSpecial,
-                    task_params = {}
-                ),
-            TaskName.SCHOOL_EXCHANGE_MEETING: TaskInstance(
-                    task_config_name = TaskName.SCHOOL_EXCHANGE_MEETING,
-                    i18n_key_name = "task_exchange",
-                    task_module = InExchange,
-                    task_params = {}
-                ),
-            TaskName.TACTICAL_CHALLENGE: TaskInstance(
-                    task_config_name = TaskName.TACTICAL_CHALLENGE,
-                    i18n_key_name = "task_contest",
-                    task_module = InContest,
-                    task_params = {'collect': False}
-                ),
-            TaskName.EXAM: TaskInstance(
-                    task_config_name = TaskName.EXAM,
-                    i18n_key_name = "task_exam",
-                    task_module = InExam,
-                    task_params = {}
-                ),
-            TaskName.ASSAULT: TaskInstance(
-                    task_config_name = TaskName.ASSAULT,
-                    i18n_key_name = "task_assault",
-                    task_module = AutoAssault,
-                    task_params = {}
-                ),
-            TaskName.EVENT: TaskInstance(
-                    task_config_name = TaskName.EVENT,
-                    i18n_key_name = "task_event",
-                    task_module = InEvent,
-                    task_params = {}
-                ),
-            TaskName.DAILY: TaskInstance(
-                    task_config_name = TaskName.DAILY,
-                    i18n_key_name = "task_daily",
-                    task_module = CollectDailyRewards,
-                    task_params = {}
-                ),
-            TaskName.MAIL: TaskInstance(
-                    task_config_name = TaskName.MAIL,
-                    i18n_key_name = "task_mail",
-                    task_module = CollectMails,
-                    task_params = {}
-                ),
-            TaskName.ONE_CLICK_RAID: TaskInstance(
-                task_config_name=TaskName.ONE_CLICK_RAID,
-                i18n_key_name="task_oneclick_raid",
-                task_module=InQuest,
-                task_params={'types': ["one-click"]}
+            TaskName.HELLOWORLD: TaskInstance(
+                task_config_name=TaskName.HELLOWORLD,
+                i18n_key_name="helloworld",
+                task_module=HelloWorld,
+                task_params={}
             ),
-            TaskName.NORMAL: TaskInstance(
-                    task_config_name = TaskName.NORMAL,
-                    i18n_key_name = "task_normal",
-                    task_module = InQuest,
-                    task_params = {'types': ["normal"]}
-                ),
-            TaskName.PUSH_NORMAL: TaskInstance(
-                    task_config_name = TaskName.PUSH_NORMAL,
-                    i18n_key_name = "push_normal",
-                    task_module = InQuest,
-                    task_params = {'types': ["push-normal"]}
-                ),
-            TaskName.HARD: TaskInstance(
-                    task_config_name = TaskName.HARD,
-                    i18n_key_name = "task_hard",
-                    task_module = InQuest,
-                    task_params = {'types': ["hard"]}
-                ),
-            TaskName.PUSH_HARD: TaskInstance(
-                    task_config_name = TaskName.PUSH_HARD,
-                    i18n_key_name = "push_hard",
-                    task_module = InQuest,
-                    task_params = {'types': ["push-hard"]}
-                ),
-            TaskName.MAIN_STORY: TaskInstance(
-                    task_config_name = TaskName.MAIN_STORY,
-                    i18n_key_name = "push_main_story",
-                    task_module = AutoStory,
-                    task_params = {'types': ["main"]}
-                ),
-            TaskName.SHORT_STORY: TaskInstance(
-                    task_config_name = TaskName.SHORT_STORY,
-                    i18n_key_name = "task_short_story",
-                    task_module= AutoStory,
-                    task_params = {'types': ["short"]}
-            ),
-            TaskName.SIDE_STORY: TaskInstance(
-                    task_config_name = TaskName.SIDE_STORY,
-                    i18n_key_name = "task_side_story",
-                    task_module = AutoStory,
-                    task_params = {'types': ["side"]}
-            ),
-            TaskName.SOLVE_CHALLENGE: TaskInstance(
-                    task_config_name = TaskName.SOLVE_CHALLENGE,
-                    i18n_key_name = "task_solve_challenge",
-                    task_module = SolveChallenge,
-                    task_params = {}
+            TaskName.CLICK_LOGIN: TaskInstance(
+                task_config_name=TaskName.CLICK_LOGIN,
+                i18n_key_name="click_login",
+                task_module=ClickLoginButton,
+                task_params={}
             ),
             TaskName.CUSTOM: TaskInstance(
-                    task_config_name = TaskName.CUSTOM,
-                    i18n_key_name = "task_user_def_task",
-                    task_module = UserTask,
-                    task_params = {}
-                ),
+                task_config_name=TaskName.CUSTOM,
+                i18n_key_name="task_user_def_task",
+                task_module=UserTask,
+                task_params={}
+            ),
         }
         # 生成config task name到i18n task name的映射表
         self.task_config_name_2_i18n_name =  {conname: config.get_text(self.taskmap[conname].i18n_key_name) for conname in self.taskmap}
@@ -260,9 +83,7 @@ class AllTask:
         """
         self.taskpool = []
         if config.userconfigdict["OPEN_GAME_APP_TASK"]:
-            self.add_task(EnterGame())
-        # 用于保存最后一次战术大赛的任务实例
-        last_contest = None
+            self.add_task(EnterApp())
         # GUI为了显示TaskName也会导入此文件，从而创建AllTask的实例，这边判断下如果config没有解析json就跳过
         if "TASK_ORDER" in config.userconfigdict and "TASK_ACTIVATE" in config.userconfigdict:
             # 把config的任务列表转换成任务实例列表
@@ -278,16 +99,9 @@ class AllTask:
                 if config.userconfigdict['TASK_ACTIVATE'][i] == False:
                     continue
                 self.add_task(task_instances_map.taskmap[task_name].task_module(**task_instances_map.taskmap[task_name].task_params))
-                if task_name == TaskName.TACTICAL_CHALLENGE:
-                    last_contest = self.taskpool[-1]
-            # 将最后一次战术大赛的收集奖励设置为True
-            if last_contest:
-                last_contest.set_collect(True)
         else:
             logging.warn({"zh_CN": "配置文件无TASK_ORDER和TASK_ACTIVATE解析", "en_US":"NO TASK_ORDER and TASK_ACTIVATE in config file"})
-        # 任务列表末尾添加一个PostAllTask任务，用于统计资源
-        if config.userconfigdict["DO_POST_ALL_TASK"]:
-            self.add_task(PostAllTask())
+        # PostAllTask（统计资源）依赖特定游戏UI，已移除
         
         
     
@@ -305,7 +119,7 @@ class AllTask:
                 EN: f"CURRENT_PERIOD_TASK_INDEX = {last_do_task_index}, continue run"
             }))
         for i,task in enumerate(self.taskpool):
-            if i < last_do_task_index and task.name != "EnterGame":
+            if i < last_do_task_index and task.name not in ("EnterGame", "EnterApp"):
                 # 跳过已经完成的任务（保留登录游戏任务）
                 continue
             # 运行任务，更新正在运行的任务下标
