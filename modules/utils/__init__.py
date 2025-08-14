@@ -42,6 +42,15 @@ def click(item:Union[str, Tuple[float, float]], sleeptime = -1, threshold=0.9) -
     if isinstance(item, str):
         matchRes = match(item, returnpos=True, threshold=threshold)
         if matchRes[0]:
+            # log click position when using template matching
+            try:
+                x, y = matchRes[1][0], matchRes[1][1]
+                logging.info(istr({
+                    CN: f"点击坐标: ({int(x)}, {int(y)}) 模板: {item}",
+                    EN: f"Click at: ({int(x)}, {int(y)}) template: {item}",
+                }))
+            except Exception:
+                pass
             click_on_screen(matchRes[1][0], matchRes[1][1])
             if(sleeptime!=-1):
                 time.sleep(sleeptime)
@@ -52,6 +61,14 @@ def click(item:Union[str, Tuple[float, float]], sleeptime = -1, threshold=0.9) -
             logging.warning({"zh_CN": "无法匹配模板图像: {} ".format(item), "en_US":"Cannot match the pattern: {} ".format(item)})
             return False
     else:
+        # log click position when using raw coordinates
+        try:
+            logging.info(istr({
+                CN: f"点击坐标: ({int(item[0])}, {int(item[1])})",
+                EN: f"Click at: ({int(item[0])}, {int(item[1])})",
+            }))
+        except Exception:
+            pass
         click_on_screen(item[0], item[1])
         if(sleeptime!=-1):
             time.sleep(sleeptime)
